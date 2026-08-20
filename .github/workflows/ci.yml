@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate static site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check support.js syntax
+        run: node --check support.js
+
+      - name: Check inline template script syntax
+        run: |
+          node -e '
+            const fs = require("fs");
+            const html = fs.readFileSync("index.html", "utf8");
+            const match = html.match(/<script type="text\/x-dc"[^>]*>([\s\S]*?)<\/script>/);
+            if (!match) { console.error("Could not find the data-dc-script block in index.html"); process.exit(1); }
+            fs.writeFileSync("/tmp/inline-template-script.js", match[1]);
+          '
+          node --check /tmp/inline-template-script.js
+
+      - name: Check index.html structural balance
+        run: node .github/scripts/check-html-balance.js
+
+      - name: Check uploads/ references resolve to real files
+        run: node .github/scripts/check-assets.js
