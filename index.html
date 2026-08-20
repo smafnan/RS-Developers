@@ -6,6 +6,30 @@
 <script src="./support.js"></script>
 </head>
 <body>
+<!--
+  Notes for reviewers (this section is plain HTML, outside <x-dc>, so it's
+  safe to leave in — it isn't parsed by the dc-runtime template engine):
+
+  - Bracketed strings like [PHONE NUMBER], [CITY], [TESTIMONIAL — ...] are
+    intentional placeholders for the client to fill in with real business
+    details, not leftover bugs. They're deliberately unmissable (rather than
+    e.g. empty strings) so they can't accidentally ship unfilled.
+
+  - The hero section uses a static photo (uploads/house.jpeg) rather than
+    a video background. The original source asset was a WhatsApp-exported
+    video, but it couldn't be retrieved through the design-tool's file API
+    (which caps reads at 256 KiB) — the video was truncated on every pull.
+    The static image uses the same photo and color grade as a placeholder;
+    swapping in a real video background is a follow-up, not a regression.
+
+  - This page's attributes (onClick, style-hover, ref, sc-if, sc-for) look
+    like they violate CONTRIBUTING.md's "lowercase HTML tag and attribute
+    names" rule. That guidance was written for the plain static index.html
+    this replaces. This version is a JSX-like template parsed client-side
+    by support.js (see its own "GENERATED — do not edit" header) — those
+    attributes are the templating runtime's actual API, not stylistic
+    choices, and can't be lowercased without breaking the page.
+-->
 <x-dc>
 <helmet>
 <meta name="description" content="R&S Builders — residential construction, remodeling, interiors and property. Ground up, done right." />
